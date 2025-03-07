@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Ambulance Service</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.css" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            font-size: 36px;
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .sub-heading {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .alert {
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+        
+        .button:hover {
+            background-color: #c0392b;
+        }
+        
+        .button:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+        
+        .emergency-button {
+            background-color: #e74c3c;
+            font-size: 20px;
+            padding: 18px;
+            margin-top: 20px;
+        }
+        
+        .emergency-button:hover {
+            background-color: #c0392b;
+        }
+        
+        .location-status {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        #map {
+            height: 200px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .disclaimer {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🚑</div>
+            <h1>Reachsure</h1>
+            <p class="sub-heading">Because Every Second Counts</p>
+        </header>
+        
+        <div class="form-container">
+            <div class="alert" id="alert"></div>
+            
+            <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" placeholder="Enter your full name">
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" placeholder="Enter your phone number">
+            </div>
+            <a href="#" class="button emergency-button" id="call-ambulance">REQUEST AMBULANCE NOW</a>
+        </div>
+        
+        <div id="map"></div>
+        <p class="location-status" id="location-status">Detecting your location...</p>
+        
+        
+        <p class="disclaimer">
+            This service connects you to emergency medical services. 
+            Please only use in case of genuine emergencies.
+        </p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.js"></script>
+    <script>
+        // DOM elements
+        const callAmbulanceBtn = document.getElementById('call-ambulance');
+        const nameInput = document.getElementById('name');
+        const phoneInput = document.getElementById('phone');
+        const alertBox = document.getElementById('alert');
+        const locationStatus = document.getElementById('location-status');
+        
+        // Variables to store user data
+        let userLocation = {
+            latitude: null,
+            longitude: null,
+            accuracy: null
+        };
+        
+        // Map initialization
+        let map = null;
+        let marker = null;
+        
+        // Load data from localStorage on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            // Check and load saved user information
+            const savedName = localStorage.getItem('ambulanceApp_name');
+            const savedPhone = localStorage.getItem('ambulanceApp_phone');
+            
+            if (savedName && savedPhone) {
+                nameInput.value = savedName;
+                phoneInput.value = savedPhone;
+            }
+            
+            // Initialize map
+            initMap();
+            
+            // Get user's location
+            getUserLocation();
+        });
+        
+        // Initialize Leaflet map
+        function initMap() {
+            // Create a map with default view (will be updated when location is available)
+            map = L.map('map').setView([0, 0], 2);
+            
+            // Add the OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+        }
+        
+        // Get user's current location
+        function getUserLocation() {
+            if (!navigator.geolocation) {
+                locationStatus.textContent = 'Geolocation is not supported by your browser';
+                return;
+            }
+            
+            function success(position) {
+                userLocation.latitude = position.coords.latitude;
+                userLocation.longitude = position.coords.longitude;
+                userLocation.accuracy = position.coords.accuracy;
+                
+                // Update map with user's location
+                map.setView([userLocation.latitude, userLocation.longitude], 15);
+                
+                // Add marker for user's location
+                if (marker) {
+                    marker.setLatLng([userLocation.latitude, userLocation.longitude]);
+                } else {
+                    marker = L.marker([userLocation.latitude, userLocation.longitude]).addTo(map);
+                }
+                
+                locationStatus.textContent = 'Location detected successfully';
+            }
+            
+            function error() {
+                locationStatus.textContent = 'Unable to retrieve your location';
+            }
+            
+            locationStatus.textContent = 'Detecting your location...';
+            
+            navigator.geolocation.getCurrentPosition(success, error, {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            });
+        }
+        
+        // Call ambulance via WhatsApp (and save details at the same time)
+        callAmbulanceBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
+            
+            if (!name) {
+                showAlert('Please enter your name', false);
+                return;
+            }
+            
+            if (!phone) {
+                showAlert('Please enter your phone number', false);
+                return;
+            }
+            
+            if (!userLocation.latitude || !userLocation.longitude) {
+                showAlert('Waiting for your location. Please try again in a moment.', false);
+                return;
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('ambulanceApp_name', name);
+            localStorage.setItem('ambulanceApp_phone', phone);
+            
+            // Create Google Maps URL with coordinates
+            const googleMapsUrl = `https://www.google.com/maps?q=${userLocation.latitude},${userLocation.longitude}`;
+            
+            // Create WhatsApp message with user details and location
+            const message = `EMERGENCY: This is ${name} (${phone}). I need an ambulance at my location: ${googleMapsUrl}`;
+            
+            // Generate WhatsApp URL
+            // Note: Replace '1234567890' with your actual emergency service WhatsApp number
+            const whatsappUrl = `https://wa.me/6376912671?text=${encodeURIComponent(message)}`;
+            
+            // Open WhatsApp
+            window.open(whatsappUrl, '_blank');
+        });
+        
+        // Show alert message
+        function showAlert(message, isSuccess) {
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
+            
+            if (isSuccess) {
+                alertBox.classList.add('success');
+            } else {
+                alertBox.classList.remove('success');
+            }
+            
+            // Hide alert after 3 seconds
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
