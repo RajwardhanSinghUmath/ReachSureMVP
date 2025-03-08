@@ -3,7 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emergency Ambulance Service</title>
+    <title>Emergency Ambulance Service in Warangal | Reachsure | 24/7 Medical Help</title>
+    <meta name="description" content="Reliable emergency ambulance service in Warangal, Telangana. Fast response times, 24/7 availability. Request medical assistance with just one click. Because Every Second Counts.">
+    <meta name="keywords" content="emergency ambulance, ambulance service warangal, medical emergency warangal, hospital transport warangal, emergency medical services telangana">
+    <meta name="geo.region" content="IN-TG">
+    <meta name="geo.placename" content="Warangal">
+    <meta name="geo.position" content="17.9689;79.5941">
+    <meta name="ICBM" content="17.9689, 79.5941">
+    
+    <!-- Open Graph tags for social sharing -->
+    <meta property="og:title" content="Emergency Ambulance Service in Warangal | Reachsure">
+    <meta property="og:description" content="Fast, reliable emergency ambulance service in Warangal. Available 24/7. Request with one click.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://reachsure.in/warangal">
+    <meta property="og:image" content="https://reachsure.in/images/ambulance-warangal.jpg">
+    
+    <!-- Structured data for local business -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EmergencyService",
+      "name": "Reachsure Emergency Ambulance Service",
+      "description": "Fast and reliable emergency ambulance service in Warangal, Telangana.",
+      "url": "https://reachsure.in/warangal",
+      "telephone": "+91-6376912671",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Warangal",
+        "addressRegion": "Telangana",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "17.9689",
+        "longitude": "79.5941"
+      },
+      "serviceArea": {
+        "@type": "GeoCircle",
+        "geoMidpoint": {
+          "@type": "GeoCoordinates",
+          "latitude": "17.9689",
+          "longitude": "79.5941"
+        },
+        "geoRadius": "30000"
+      },
+      "areaServed": ["Warangal", "Hanamkonda", "Kazipet", "Warangal Urban", "Warangal Rural"]
+    }
+    </script>
+    
+    <link rel="canonical" href="https://reachsure.in/warangal">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.css" />
     <style>
         * {
@@ -39,6 +87,7 @@
         h1 {
             color: #333;
             margin-bottom: 5px;
+            font-size: 24px;
         }
         
         .sub-heading {
@@ -140,14 +189,52 @@
             text-align: center;
             margin-top: 20px;
         }
+        
+        .service-info {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .service-info h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .service-info p {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .warangal-landmarks {
+            margin-top: 15px;
+            font-size: 13px;
+        }
+        
+        .warangal-landmarks h3 {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+        
+        .warangal-landmarks ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .warangal-landmarks li {
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="logo">🚑</div>
-            <h1>Reachsure</h1>
-            <p class="sub-heading">Because Every Second Counts</p>
+            <h1>Emergency Ambulance Service in Warangal</h1>
+            <p class="sub-heading">Reachsure - Because Every Second Counts</p>
         </header>
         
         <div class="form-container">
@@ -166,12 +253,31 @@
         </div>
         
         <div id="map"></div>
-        <p class="location-status" id="location-status">Detecting your location...</p>
+        <p class="location-status" id="location-status">Detecting your location in Warangal...</p>
         
+        <div class="service-info">
+            <h2>24/7 Emergency Ambulance Service in Warangal</h2>
+            <p>Reachsure provides the fastest ambulance service in Warangal and surrounding areas. Our ambulances are equipped with advanced life support systems and trained paramedics.</p>
+            
+            <div class="warangal-landmarks">
+                <h3>We serve all areas in Warangal including:</h3>
+                <ul>
+                    <li>MGM Hospital Area</li>
+                    <li>NIT Warangal</li>
+                    <li>Hanamkonda</li>
+                    <li>Kazipet</li>
+                    <li>Warangal Fort Area</li>
+                    <li>Bhadrakali Temple</li>
+                    <li>Thousand Pillar Temple</li>
+                    <li>Warangal Bus Station</li>
+                    <li>Warangal Railway Station</li>
+                </ul>
+            </div>
+        </div>
         
         <p class="disclaimer">
-            This service connects you to emergency medical services. 
-            Please only use in case of genuine emergencies.
+            This service connects you to emergency medical services in Warangal, Telangana. 
+            Please only use in case of genuine emergencies. Call also available at: <strong>+91-6376912671</strong>
         </p>
     </div>
 
@@ -195,6 +301,12 @@
         let map = null;
         let marker = null;
         
+        // Default Warangal coordinates
+        const warangalCoords = {
+            latitude: 17.9689,
+            longitude: 79.5941
+        };
+        
         // Load data from localStorage on page load
         window.addEventListener('DOMContentLoaded', () => {
             // Check and load saved user information
@@ -206,7 +318,7 @@
                 phoneInput.value = savedPhone;
             }
             
-            // Initialize map
+            // Initialize map with Warangal as default
             initMap();
             
             // Get user's location
@@ -215,13 +327,17 @@
         
         // Initialize Leaflet map
         function initMap() {
-            // Create a map with default view (will be updated when location is available)
-            map = L.map('map').setView([0, 0], 2);
+            // Create a map with Warangal as default view
+            map = L.map('map').setView([warangalCoords.latitude, warangalCoords.longitude], 12);
             
             // Add the OpenStreetMap tiles
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
+            
+            // Add default marker for Warangal city center
+            marker = L.marker([warangalCoords.latitude, warangalCoords.longitude]).addTo(map);
+            marker.bindPopup("<b>Warangal City</b><br>Default location").openPopup();
         }
         
         // Get user's current location
@@ -239,21 +355,18 @@
                 // Update map with user's location
                 map.setView([userLocation.latitude, userLocation.longitude], 15);
                 
-                // Add marker for user's location
-                if (marker) {
-                    marker.setLatLng([userLocation.latitude, userLocation.longitude]);
-                } else {
-                    marker = L.marker([userLocation.latitude, userLocation.longitude]).addTo(map);
-                }
+                // Update marker for user's location
+                marker.setLatLng([userLocation.latitude, userLocation.longitude]);
+                marker.bindPopup("<b>Your Location</b><br>Our ambulance will reach here").openPopup();
                 
-                locationStatus.textContent = 'Location detected successfully';
+                locationStatus.textContent = 'Your location in Warangal detected successfully';
             }
             
             function error() {
-                locationStatus.textContent = 'Unable to retrieve your location';
+                locationStatus.textContent = 'Unable to retrieve your exact location in Warangal';
             }
             
-            locationStatus.textContent = 'Detecting your location...';
+            locationStatus.textContent = 'Detecting your location in Warangal...';
             
             navigator.geolocation.getCurrentPosition(success, error, {
                 enableHighAccuracy: true,
@@ -279,23 +392,21 @@
                 return;
             }
             
-            if (!userLocation.latitude || !userLocation.longitude) {
-                showAlert('Waiting for your location. Please try again in a moment.', false);
-                return;
-            }
+            // Use detected location or default to Warangal if not available
+            const latitude = userLocation.latitude || warangalCoords.latitude;
+            const longitude = userLocation.longitude || warangalCoords.longitude;
             
             // Save to localStorage
             localStorage.setItem('ambulanceApp_name', name);
             localStorage.setItem('ambulanceApp_phone', phone);
             
             // Create Google Maps URL with coordinates
-            const googleMapsUrl = `https://www.google.com/maps?q=${userLocation.latitude},${userLocation.longitude}`;
+            const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
             
             // Create WhatsApp message with user details and location
-            const message = `EMERGENCY: This is ${name} (${phone}). I need an ambulance at my location: ${googleMapsUrl}`;
+            const message = `EMERGENCY: This is ${name} (${phone}). I need an ambulance at my location in Warangal: ${googleMapsUrl}`;
             
-            // Generate WhatsApp URL
-            // Note: Replace '1234567890' with your actual emergency service WhatsApp number
+            // Generate WhatsApp URL with emergency service number
             const whatsappUrl = `https://wa.me/6376912671?text=${encodeURIComponent(message)}`;
             
             // Open WhatsApp
